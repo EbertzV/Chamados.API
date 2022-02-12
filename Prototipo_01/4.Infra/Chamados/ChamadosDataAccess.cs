@@ -22,6 +22,38 @@ namespace Chamados._4.Infra.Chamados
             _logger = loggerFactory.CreateLogger<ChamadosDataAccess>();
         }
 
+        public async Task<Resultado<IEnumerable<ChamadoViewModel>>> Recuperar()
+        {
+            const string sql = @"SELECT	 Chamados.Id,
+		                                 Chamados.Descricao,
+		                                 Chamados.DataCriacao,
+		                                 Tecnicos.Id AS IdTecnico,
+		                                 Tecnicos.Nome AS NomeTecnico
+                                 FROM Chamados
+                                 LEFT JOIN Atribuicoes
+	                                 ON Atribuicoes.IdChamado = Chamados.Id
+	                                 AND Atribuicoes.Ativa = 1
+                                 LEFT JOIN Tecnicos
+	                                 On Tecnicos.Id = Atribuicoes.IdTecnico";
+            using var conexao = new SqlConnection(_stringConexao);
+            try
+            {
+                await conexao.OpenAsync();
+                var resultado = await conexao.QueryAsync(sql);
+                return Resultado<IEnumerable<ChamadoViewModel>>
+                    .NovoSucesso(resultado.Select(r => new ChamadoViewModel(r.Id, r.Descricao, r.DataCriacao, r.IdTecnico, r.NomeTecnico)));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Falha ao recuperar chamados. String de conexão: {stringConexao}.", _stringConexao);
+                throw;
+            }
+            finally
+            {
+                await conexao.CloseAsync();
+            }
+        }
+
         public async Task<Resultado<IEnumerable<ChamadoAbertoViewModel>>> RecuperarPorStatus(string status)
         {
             const string sql = @"SELECT	Id,

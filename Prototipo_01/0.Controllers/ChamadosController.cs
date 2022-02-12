@@ -32,10 +32,18 @@ namespace Prototipo_01.Controllers
             return Ok();
         }
 
-        [HttpGet]
-        public async Task<IActionResult> RecuperarChamadosAbertos([FromServices] IChamadosDataAccess chamadosDataAccess)
+        [HttpGet("Abertos")]
+        public async Task<IActionResult> RecuperarAbertos([FromServices] IChamadosDataAccess chamadosDataAccess)
         {
             if (await chamadosDataAccess.RecuperarPorStatus("Aberto") is var resultado && !resultado.Sucesso)
+                return BadRequest(resultado.Falha);
+            return Ok(resultado.Valor);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> RecuperarTodos([FromServices] IChamadosDataAccess chamadosDataAccess)
+        {
+            if (await chamadosDataAccess.Recuperar() is var resultado && !resultado.Sucesso)
                 return BadRequest(resultado.Falha);
             return Ok(resultado.Valor);
         }
