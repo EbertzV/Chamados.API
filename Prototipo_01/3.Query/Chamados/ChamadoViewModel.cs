@@ -4,7 +4,7 @@ namespace Chamados._3.Query.Chamados
 {
     public sealed class ChamadoViewModel
     {
-        public ChamadoViewModel(Guid id, string descricao, DateTime dataCriacao, string status, TecnicoAtribuidoViewModel tecnicoAtribuido = null)
+        public ChamadoViewModel(string id, string descricao, DateTime dataCriacao, string status, TecnicoAtribuidoViewModel tecnicoAtribuido = null)
         {
             Id = id;
             Descricao = descricao;
@@ -13,7 +13,7 @@ namespace Chamados._3.Query.Chamados
             TecnicoAtribuido = tecnicoAtribuido;
         }
 
-        public Guid Id { get; }
+        public string Id { get; }
         public string Descricao { get; }
         public DateTime DataCriacao { get; }
         public string Status { get; }

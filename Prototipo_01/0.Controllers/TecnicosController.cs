@@ -14,12 +14,12 @@ namespace Prototipo_01.Controllers
         public async Task<IActionResult> RecuperarChamadosDoTecnico([FromRoute] Guid idTecnico, [FromServices] IAtribuicoesDataAccess atribuicoesDataAccess)
             => Ok(await atribuicoesDataAccess.RecuperarAtivas(idTecnico));
 
-        [HttpGet("TecnicosDisponiveis")]
+        [HttpGet]
         public async Task<IActionResult> RecuperarTecnicosDisponiveis([FromServices] ITecnicosDataAccess tecnicosDataAccess)
         {
             if (await tecnicosDataAccess.RecuperarDisponiveisAsync() is var resultado && !resultado.Sucesso)
                 return BadRequest(resultado.Falha);
-            return Ok(resultado.Sucesso);
+            return Ok(resultado.Valor);
         }
     }
 }

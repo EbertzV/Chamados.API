@@ -41,7 +41,7 @@ namespace Chamados._4.Infra.Chamados
                 await conexao.OpenAsync();
                 var resultado = await conexao.QueryAsync(sql);
                 return Resultado<IEnumerable<ChamadoViewModel>>
-                    .NovoSucesso(resultado.Select(r => new ChamadoViewModel(r.Id, r.Descricao, r.DataCriacao, r.IdTecnico, r.NomeTecnico)));
+                    .NovoSucesso(resultado.Select(r => new ChamadoViewModel(r.Id.ToString().ToUpper(), r.Descricao, r.DataCriacao, r.IdTecnico, r.NomeTecnico)));
             }
             catch (Exception ex)
             {

@@ -41,6 +41,7 @@ namespace Prototipo_01
             services.AddScoped<IChamadosRepositorio, ChamadosRepositorio>();
             services.AddScoped<ITecnicosDataAccess, TecnicosDataAccess>();
             services.AddScoped<IChamadosDataAccess, ChamadosDataAccess>();
+            services.AddCors();
             services.AddControllers();
         }
 
@@ -51,6 +52,12 @@ namespace Prototipo_01
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseCors(policy =>
+            {
+                policy.AllowAnyOrigin();
+                policy.AllowAnyMethod();
+                policy.AllowAnyHeader();
+            });
 
             var containerBuilder = new ContainerBuilder();
             containerBuilder.RegisterModule(new PrototipoModule() { });
@@ -62,6 +69,7 @@ namespace Prototipo_01
             app.UseRouting();
 
             app.UseAuthorization();
+            
 
             app.UseEndpoints(endpoints =>
             {
