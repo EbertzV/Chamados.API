@@ -50,6 +50,10 @@ BEGIN
 	);
 END
 GO
+
+IF NOT EXISTS(SELECT 1 FROM SysColumns WHERE Name = 'Detalhes' AND OBJECT_NAME(Id) = 'Chamados')
+	ALTER TABLE Chamados ADD Detalhes VARCHAR(Max);
+GO
 --Fim do script
 
 IF EXISTS (SELECT 1 FROM [dbo].[Versao] WHERE Versao = '0.0' AND AtualizandoPara = '0.1')

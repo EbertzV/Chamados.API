@@ -41,11 +41,51 @@ namespace Chamados._4.Infra.Chamados
                 await conexao.OpenAsync();
                 var resultado = await conexao.QueryAsync(sql);
                 return Resultado<IEnumerable<ChamadoViewModel>>
-                    .NovoSucesso(resultado.Select(r => new ChamadoViewModel(r.Id.ToString().ToUpper(), r.Descricao, r.DataCriacao, r.IdTecnico, r.NomeTecnico)));
+                    .NovoSucesso(resultado.Select(r => new ChamadoViewModel(r.Id.ToString().ToUpper(), r.Descricao, r.DataCriacao, r.IdTecnico, r.Detalhes, r.NomeTecnico)));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Falha ao recuperar chamados. String de conexão: {stringConexao}.", _stringConexao);
+                throw;
+            }
+            finally
+            {
+                await conexao.CloseAsync();
+            }
+        }
+
+        public async Task<Resultado<ChamadoViewModel>> Recuperar(Guid id)
+        {
+            const string sql = @"SELECT	 Chamados.Id,
+		                                 Chamados.Descricao,
+		                                 Chamados.DataCriacao,
+		                                 Tecnicos.Id AS IdTecnico,
+		                                 Tecnicos.Nome AS NomeTecnico,
+                                         Chamados.Status,
+                                         Chamados.Detalhes
+                                 FROM Chamados
+                                 LEFT JOIN Atribuicoes
+	                                 ON Atribuicoes.IdChamado = Chamados.Id
+	                                 AND Atribuicoes.Ativa = 1
+                                 LEFT JOIN Tecnicos
+	                                 On Tecnicos.Id = Atribuicoes.IdTecnico
+                                 WHERE Chamados.Id = @id";
+            using var conexao = new SqlConnection(_stringConexao);
+            try
+            {
+                await conexao.OpenAsync();
+                var resultado = await conexao.QueryFirstOrDefaultAsync(sql, new { id });
+                return Resultado<ChamadoViewModel>
+                    .NovoSucesso(new ChamadoViewModel(
+                        resultado.Id.ToString().ToUpper(),
+                        resultado.Descricao,
+                        resultado.DataCriacao, 
+                        resultado.Status,
+                        resultado.Detalhes));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Falha ao recuperar chamado. String de conexão: {stringConexao}.", _stringConexao);
                 throw;
             }
             finally

@@ -47,5 +47,13 @@ namespace Prototipo_01.Controllers
                 return BadRequest(resultado.Falha);
             return Ok(resultado.Valor);
         }
+
+        [HttpGet("{id}/Detalhes")]
+        public async Task<IActionResult> Recuperar([FromRoute] string id, [FromServices] IChamadosDataAccess chamadosDataAccess)
+        {
+            if (await chamadosDataAccess.Recuperar(Guid.Parse(id)) is var resultado && !resultado.Sucesso)
+                return BadRequest(resultado.Falha);
+            return Ok(resultado.Valor);
+        }
     }
 }
